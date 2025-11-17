@@ -11,10 +11,10 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, HttpUrl
+from typing import Optional, List
 
-# Example schemas (replace with your own):
+# Example schemas (you can keep or remove if unused):
 
 class User(BaseModel):
     """
@@ -38,11 +38,18 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Games app schemas
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class Game(BaseModel):
+    """
+    Games collection schema
+    Collection name: "game"
+    """
+    title: str = Field(..., min_length=2, max_length=120, description="Game title")
+    description: Optional[str] = Field(None, max_length=2000, description="Short description of the game")
+    genre: Optional[str] = Field(None, description="Primary genre, e.g., Action, RPG")
+    platform: Optional[str] = Field(None, description="Platform, e.g., PC, Mac, Linux")
+    size_gb: Optional[float] = Field(None, ge=0, le=500, description="Approximate download size in GB")
+    thumbnail: Optional[HttpUrl] = Field(None, description="Thumbnail image URL")
+    screenshots: Optional[List[HttpUrl]] = Field(default=None, description="Optional screenshot URLs")
+    download_url: Optional[HttpUrl] = Field(None, description="Direct download URL or external link")
